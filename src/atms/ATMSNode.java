@@ -10,7 +10,7 @@ public class ATMSNode implements Comparable<ATMSNode>{
 	private String _nodeName;
 	private Environment _Justifications1;
 	private Environment _Justifications2;
-	private Boolean Alarm = false;
+	private Boolean Status = true;
 	
 	private ATMSNode(String nodeName) {
 	
@@ -21,14 +21,19 @@ public class ATMSNode implements Comparable<ATMSNode>{
 		
 		_Label.add(environment);
 	}
-	
+	public void addEnvironment(Set<Environment> environment) {
+		
+		for(Environment env : environment){
+		_Label.add(env);
+		}
+	}
 	public void setAlarm() {
-		Alarm = true;
+		Status = false ;
 	}
 	
 
-	public boolean getAlarm() {
-		return Alarm;
+	public boolean getStatus() {
+		return Status;
 	}
 	
 	public void addJustification(int justType, Environment environ) {

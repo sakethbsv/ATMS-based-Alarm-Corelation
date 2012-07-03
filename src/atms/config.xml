@@ -1,0 +1,18 @@
+<config>
+<Element id="2" elementid="BTS" label="A 2" J1="" J2=""/>
+<Element id="3" elementid="BTS" label="B 3 *2" J1="2" J2=""/>
+
+<!--<element>
+  <name>BTS1</name>
+  <label></label>
+  <J1>Pai</J1>
+  <J2>22</J2>
+</element>
+<element>
+  <name>Bill</name>
+  <label></label>
+  <J1>Gates</J1>
+  <J2>46</J2>
+</element>
+-->
+</config>

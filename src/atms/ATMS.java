@@ -5,94 +5,102 @@ import java.util.*;
 public class ATMS {
 	
 	public Set<Environment> _nogoods;
+	public Set<Environment> _nogoodsTemp;
 	private Environment _nodes;
 	public Environment J1;
 	public Environment J2;
 	public ATMSNode _faultNode;
-
+	public Set<Environment> EA, EA1, EA2;
 	/**
 	 * constructor
 	 */
-	public ATMS(Environment nodes, ATMSNode A){
-		//_prevJust = new LinkedHashSet<Justification>();
+	public ATMS(ATMSNode A){
+
 		_nogoods = new LinkedHashSet<Environment>();
-		_nodes = nodes;
+	//	_nodes = nodes;
 		 _faultNode = A;
 		J1 = A.getJustifications1();
 		J2 = A.getJustifications2();
-	//	System.out.println(A);
-	//	System.out.println(J1);
-	//	System.out.println(J2);
 		
-		Set<Environment> EA, EA1, EA2 = null;
-		if(!J1._nodes.isEmpty()){
-			Set<Environment> E = _faultNode.getLabel();
-			//System.out.println(E);
+	if(!J1._nodes.isEmpty()){
+			
+		Set<Environment> E = _faultNode.getLabel();
+		EA = E;
+			
+		for (ATMSNode node : J1._nodes) {
+		
+			EA.removeAll(node.getLabel());
+			EA2 = EA; 
+		
+			boolean status = Test(node);
+				
+			if(status == false){
 					
-	EA = E;
-//	System.out.println(EA);
-			
-			
-			for (ATMSNode node : J1._nodes) {
-			/*	
-				System.out.println(E);
-				System.out.println(node);
-				for (Environment env : E) {
-					if(env._nodes.contains(node)){
-					EA = env;
-					EA1 = EA;
-					break; 	
-					}
-				}		
-				//if(!env._nodes.isEmpty())
-				//System.out.println(EA);
-				//System.out.println(node.getLabel());
-				 */
-				//EA1 = EA;
-				EA.removeAll(node.getLabel());
-				EA2 = EA; 
+				ATMS nextAtms = new ATMS(node);
+				_nogoods.addAll(nextAtms._nogoods);
 				
+				}
+			}
+			
+		_nogoods.addAll(EA2);
 				
+		}
+	
+		else if(!J2._nodes.isEmpty()){
+			for (ATMSNode node : J2._nodes) {
 				boolean status = Test(node);
-				//System.out.println(status);
 				
 				if(status == false){
-				//	System.out.println(node);
-					ATMS nextAtms = new ATMS(nodes, node);
-				//	System.out.println(nextAtms._nogoods);
-					_nogoods.addAll(nextAtms._nogoods);
 					
+						ATMS nextAtms = new ATMS(node);
+						_nogoodsTemp.addAll(nextAtms._nogoods);
+						
+					}
+				else{
+					for (Environment env : EA) {
+							
+							Set<Environment> intersection = new HashSet<Environment>(EA);
+							intersection.retainAll(node.getLabel());
+							if(intersection!=null){
+							EA2 = intersection;
+							System.out.println(EA2);
+							_nogoodsTemp.addAll(EA2);
+							}
+					}
+						
+				}
+			}
+			for(Environment env : _nogoodsTemp){
+				Set<Environment> Temp;
+				Temp = _nogoodsTemp;
+				Temp.remove(env);
+				for(Environment env1 : Temp){
+					
+					if(env.isSuperset(env1)){
+						_nogoodsTemp.remove(env);
+						
+					}
+					else{
+						_nogoodsTemp.remove(env1);
+					}
 				}
 				
-				
-				//atms.J1._nodes.remove(node);
 			}
-			_nogoods.addAll(EA2);
-			
-			
-			
 		}
-		else if(!J2._nodes.isEmpty()){
-			//Goto Step6
-		}
-		//Set<Environment> E = _nogoods = _faultNode.getLabel();
-		
-		//Goto Step9
-		
-		
-		
-
-		
+	
 	}
+		
 		
 	public static boolean Test(ATMSNode node){
 		
-		return node.getAlarm();
+		return node.getStatus();
 		
 	}
 	
 public static void main(String[] args) {
 		
+	    Parser parser = new Parser("config.xml");
+	    /*	
 		TreeSet<ATMSNode> en = new TreeSet<ATMSNode>();
 		en.add(ATMSNode.getNode("1"));
 		en.add(ATMSNode.getNode("2"));
@@ -167,11 +175,14 @@ public static void main(String[] args) {
 		//System.out.println(ATMSNode.getNode("4"));
 		//System.out.println(ATMSNode.getNode("5"));		
 		//System.out.println(ATMSNode.getNode("6"));
-		//ATMSNode.getNode("4").setAlarm();
+		 
+		 */
+		ATMSNode.getNode("4").setAlarm();
 		//ATMSNode.getNode("3").setAlarm();
 		
-		ATMS atms = new ATMS(e, ATMSNode.getNode("5"));
+		ATMS atms = new ATMS(ATMSNode.getNode("5"));
 		System.out.println("The Diagnosis yields :" + atms._nogoods);
+		System.out.println("The AlternateDiagnosis yields :" + atms._nogoodsTemp);
 		
 			}
 }
